@@ -1,0 +1,9 @@
+<Rectangle ux:Class="IconButton" Color="#273c75" CornerRadius="2" Margin="3">
+	<string ux:Property="Icon" />
+	<MaterialIcon Value="{ReadProperty Icon}" FontSize="16" Alignment="VerticalCenter" Color="#FFF" Margin="10" />
+	<Shadow Distance="2" Size="2" Color="#0002" />
+	<WhilePressed>
+        <Change this.Color="#192a56" Duration="0.1" />
+        <Change this.CornerRadius="25" Duration="0.1" />
+    </WhilePressed>
+</Rectangle>

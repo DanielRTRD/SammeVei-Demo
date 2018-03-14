@@ -1,0 +1,207 @@
+<App Background="#F5F5F5">
+	<iOS.StatusBarConfig Style="Light" Animation="Slide" IsVisible="True" />
+    <Android.StatusBarConfig Color="#0003" IsVisible="True" />
+	
+	<JavaScript File="data.js" />
+
+	<JavaScript>
+        var InterApp = require("FuseJS/InterApp");
+
+        function openInfihex() {
+            InterApp.launchUri('https://www.infihex.com/');
+        }
+
+        module.exports = {
+            openInfihex: openInfihex
+        };
+
+    </JavaScript>
+	
+	<Panel ux:Name="contentPlaceholder" />
+	
+	<DockPanel>
+
+		<EdgeNavigator>
+            <Panel ux:Name="sidebar" Edge="Left" Width="100%" Margin="0,0,56,0" Background="#2c3e50">
+                <Shadow ux:Name="shadow" Angle="180" Distance="8" Size="16" Color="#0000" />
+                <ActivatingAnimation>
+                    <Change shadow.Color="#0004" />
+                    <Change sidebarFade.Opacity="1" />
+                    <Change mainScrollView.HitTestMode="None" />
+                </ActivatingAnimation>
+                <DockPanel ClipToBounds="false">
+                    <StackPanel Margin="0,10" Alignment="TopLeft" ItemSpacing="0" ClipToBounds="true" Width="100%" Height="100%">
+                        <StatusBarBackground />
+                        <SidebarButton Text="Settings" Icon="settings">
+                            <Clicked>
+                                <NavigateToggle Target="sidebar" />
+                            </Clicked>
+                        </SidebarButton>
+                    </StackPanel>
+                    <StackPanel Dock="Bottom" Margin="16">
+                        <Text FontSize="12" Alignment="Center" Value="v{appVersion}" Color="#7f8c8d" Padding="0,20,0,0"></Text>
+                        <Text FontSize="12" Alignment="Center" Value="Made by Infihex" Color="#7f8c8d">
+                            <Clicked>
+                                <Callback Handler="{openInfihex}" />
+                            </Clicked>
+                        </Text>
+                    </StackPanel>
+                </DockPanel>
+            </Panel>
+            
+            <DockPanel>
+                <Rectangle ux:Name="sidebarFade" Layer="Overlay" Color="#0005" Opacity="0" HitTestMode="None" />
+                <StackPanel ux:Name="statusAndAppBar" Dock="Top" Color="#303641">
+                    <Shadow Size="3" Distance="1" />
+                    <StatusBarBackground Background="#303641" />
+                    <Grid Columns="auto,1*,auto">
+                        <Panel Height="56">
+                            <Hamburger>
+                                <Clicked>
+                                    <NavigateToggle Target="sidebar" />
+                                </Clicked>
+                            </Hamburger>
+                        </Panel>
+                        <Panel Height="56">
+                            <Text Alignment="VerticalCenter" Color="#F5F5F5" FontSize="20" Margin="10,0,0,0" Font="RobotoMedium">
+								Sammevei
+							</Text>
+                        </Panel>
+                        <Panel Width="56" Height="56">
+                        </Panel>
+                    </Grid>
+                </StackPanel>
+            </DockPanel>
+        </EdgeNavigator>
+		
+		<ScrollView ux:Name="mainScrollView" LayoutMode="PreserveScrollPosition" ClipToBounds="false" Margin="0,56,0,0" SnapMinTransform="false">
+			<StackPanel Margin="0,0,0,15">
+				<StatusBarBackground />
+				<Selection MinCount="0" MaxCount="1" />
+				
+				<Each Items="{events}">
+					<EventCard layoutTarget="contentPlaceholder">
+						<Selectable Value="{id}" />
+						<WhileSelected>
+							<Change mainScrollView.UserScroll="false" DelayBack="0" />
+							<Move Target="statusAndAppBar" Y="-1" RelativeTo="Size" Duration="1.2" Delay="0.1" Easing="QuarticOut" EasingBack="QuarticIn" />
+						</WhileSelected>
+					</EventCard>
+				</Each>
+			</StackPanel>
+		</ScrollView>
+		
+		<BottomBarBackground Dock="Bottom" />
+	</DockPanel>
+	
+	<StackPanel ux:Class="EventCard" ImageHeight="175">
+		<float ux:Property="ImageHeight" />
+		<Panel ux:Dependency="layoutTarget" />
+	
+		<OnBackButton>
+			<ToggleSelection Mode="RemoveOnly" />
+		</OnBackButton>
+		
+		<WhileSelected>
+			<Change imageAndContent.LayoutMaster="layoutTarget" DelayBack="0" Delay="0" />
+			<BringToFront />
+
+			<Change image.CornerRadius="0" Duration="0.1" DelayBack="0" />
+			<Change image.Margin="0" Duration="0.25" Delay="0" DelayBack="0" Easing="CubicInOut" />
+
+
+            <Change content.Margin="56,15,30,15" Duration="0.3" DelayBack="0" />
+		</WhileSelected>
+		
+		<WhileSelected Invert="true">
+			<Change contentScrollView.Opacity="0.4" Duration="0.3" DelayBack="0" />
+			<Change content.Opacity="0.5" Duration="0.5" DelayBack="0" />
+			<Move Target="content" Y="30" Duration="0.7" DelayBack="0" Delay="0" Easing="QuadraticIn" />
+			
+			<Change detailNavigationBar.Opacity="0" Duration="0.2" Delay="0" />
+			<Change detailNavigationBar.HitTestMode="None" />
+
+            <Change content.Margin="20,15,30,15" Duration="0.3" DelayBack="0" />
+		</WhileSelected>
+		
+		<Panel ux:Name="contentLimitPanel" Height="{ReadProperty ImageHeight}">
+			<DockPanel ux:Name="imageAndContent" ClipToBounds="true" HitTestMode="LocalBoundsAndChildren">
+				<LayoutAnimation>
+					<Move X="1" RelativeTo="WorldPositionChange" DelayBack="0" Duration="0.2" Easing="QuadraticInOut" />
+					<Move Y="1" RelativeTo="WorldPositionChange" DelayBack="0" Duration="0.2" Easing="SinusoidalIn" />
+					<Resize X="1" Y="1" RelativeTo="SizeChange" DelayBack="0" Duration="0.25" Easing="QuadraticIn" />
+				</LayoutAnimation>
+				
+				<Panel Dock="Top" Height="{ReadProperty ImageHeight}">
+					<StackPanel ux:Name="detailNavigationBar" Alignment="Top">
+						<StatusBarBackground />
+						<BackButton Alignment="Left">
+							<Clicked>
+								<ToggleSelection Mode="RemoveOnly" />
+							</Clicked>
+						</BackButton>
+					</StackPanel>
+
+					<Panel>
+                        <Clicked>
+                            <ToggleSelection Mode="AddOnly" />
+                        </Clicked>
+                        
+                        <Rectangle ux:Name="image" Layer="Background" CornerRadius="2,2,0,0" Margin="15,15,15,0">
+							<SolidColor Color="#444" />
+							<ImageFill File="{image}" StretchMode="UniformToFill" WrapMode="ClampToEdge"/>
+							<LinearGradient>
+								<GradientStop Color="0,0,0, 0.1" Offset="0" />
+								<GradientStop Color="0,0,0, 0.5" Offset="1" />
+							</LinearGradient>
+						</Rectangle>
+                        
+                    </Panel>
+
+				</Panel>
+				
+				<ScrollView ux:Name="contentScrollView" Background="#fff">
+					<StackPanel ux:Name="content" Margin="56,20,20,20" ItemSpacing="10">
+
+						<SmallHeaderText>EDIT TIME</SmallHeaderText>
+						<Grid Columns="3*,auto,auto">
+							<Text Color="#212121" FontSize="30" Alignment="VerticalCenter">{morningtime}</Text>
+							<ModernToggle PrimaryColor="#9b59b6" SecondaryColor="#fff" IsActive="false" />
+							<FlatButton Text="EDIT" />
+						</Grid>
+						<Grid Columns="3*,auto,auto">
+							<Text Color="#212121" FontSize="30" Alignment="VerticalCenter">{afternoontime}</Text>
+							<ModernToggle PrimaryColor="#9b59b6" SecondaryColor="#fff" IsActive="false" />
+							<FlatButton Text="EDIT" />
+						</Grid>
+
+						<SmallHeaderText>YOUR RIDES</SmallHeaderText>
+						<StackPanel>
+						    <Each Items="{rideList}">
+						        <Grid RowCount="1" Columns="3*,auto,auto">
+									<Text Color="#212121" Alignment="VerticalCenter">{name}</Text>
+									<IconButton Icon="phone" />
+									<IconButton Icon="message" />
+								</Grid>
+
+						    </Each>
+						</StackPanel>
+					</StackPanel>
+				</ScrollView>
+			</DockPanel>
+		</Panel>
+		
+		<StackPanel Margin="35,10" ItemSpacing="10">
+			<Clicked>
+                <ToggleSelection Mode="AddOnly" />
+            </Clicked>
+			<SmallHeaderText Value="{date} - {rides} rides" Font="RobotoMedium" Margin="0,10,0,0" />
+			<BodyText Value="Morning: {morningtime}" />
+			<BodyText Value="Afternoon: {afternoontime}" Margin="0,0,0,5" />
+		</StackPanel>
+		
+		<Rectangle Layer="Background" Color="#fff" CornerRadius="2" Margin="15,15,15,0">
+			<Shadow Size="2" Distance="2" Color="#0003" />
+		</Rectangle>
+	</StackPanel>
+</App>
