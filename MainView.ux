@@ -39,7 +39,6 @@
                         </SidebarButton>
                     </StackPanel>
                     <StackPanel Dock="Bottom" Margin="16">
-                        <Text FontSize="12" Alignment="Center" Value="v{appVersion}" Color="#7f8c8d" Padding="0,20,0,0"></Text>
                         <Text FontSize="12" Alignment="Center" Value="Made by Infihex" Color="#7f8c8d">
                             <Clicked>
                                 <Callback Handler="{openInfihex}" />
